@@ -1,1 +1,1 @@
-# JIT Assembler  [![Build Status](https://secure.travis-ci.org/indutny/jit.js.png)](http://travis-ci.org/indutny/jit.js)
+# JIT Assembler [![Build Status](https://travis-ci.org/indutny/jit.js.png?branch=master)](https://travis-ci.org/indutny/jit.js)
