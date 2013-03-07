@@ -13,6 +13,11 @@ using namespace node;
 
 class ExecInfo : public ObjectWrap {
  public:
+  typedef intptr_t (*cbarg0)(void);
+  typedef intptr_t (*cbarg1)(Local<Value>);
+  typedef intptr_t (*cbarg2)(Local<Value>, Local<Value>);
+  typedef intptr_t (*cbarg3)(Local<Value>, Local<Value>, Local<Value>);
+
   ExecInfo(void* exec, size_t elen, void* guard, size_t glen)
       : exec_(exec),
         elen_(elen),
@@ -37,8 +42,7 @@ class ExecInfo : public ObjectWrap {
   Handle<Function> GetFunction() {
     HandleScope scope;
 
-    Local<FunctionTemplate> t = FunctionTemplate::New(
-        reinterpret_cast<InvocationCallback>(exec_));
+    Local<FunctionTemplate> t = FunctionTemplate::New(Exec);
     Local<Function> fn = t->GetFunction();
 
     Local<Object> obj = obj_template_->NewInstance();
@@ -49,7 +53,36 @@ class ExecInfo : public ObjectWrap {
     return scope.Close(t->GetFunction());
   }
 
- private:
+ protected:
+  static Handle<Value> Exec(const Arguments& args) {
+    HandleScope scope;
+
+    assert(args.Callee()->IsFunction());
+    Local<Function> fn = args.Callee().As<Function>();
+
+    assert(fn->Has(sym_execinfo_));
+    Local<Object> info_obj = fn->Get(sym_execinfo_).As<Object>();
+    ExecInfo* info = ObjectWrap::Unwrap<ExecInfo>(info_obj);
+
+    intptr_t ret;
+    switch (args.Length()) {
+     case 0:
+      ret = reinterpret_cast<cbarg0>(info->exec_)();
+      break;
+     case 1:
+      ret = reinterpret_cast<cbarg1>(info->exec_)(args[0]);
+      break;
+     case 2:
+      ret = reinterpret_cast<cbarg2>(info->exec_)(args[0], args[1]);
+      break;
+     default:
+      ret = reinterpret_cast<cbarg3>(info->exec_)(args[0], args[1], args[2]);
+      break;
+    }
+
+    return Number::New(ret);
+  }
+
   void* exec_;
   size_t elen_;
   void* guard_;
