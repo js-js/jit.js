@@ -3,7 +3,7 @@
 #include <node_buffer.h>
 #include <sys/mman.h>
 #include <unistd.h>
-#include <strings.h>
+#include <string.h>
 #include <assert.h>
 
 namespace jit {
