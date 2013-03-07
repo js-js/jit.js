@@ -11,6 +11,13 @@ describe('JIT.js', function() {
         this.movq('rbp', 'rsp');
         this.pop('rbp');;
         this.ret();
+      } else if (this.arch === 'ia32') {
+        this.push('ebp');
+        this.movl('esp', 'ebp');
+        this.movl(42, 'eax');
+        this.movl('ebp', 'esp');
+        this.pop('ebp');;
+        this.ret();
       }
     });
 
