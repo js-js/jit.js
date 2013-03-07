@@ -6,9 +6,9 @@ describe('JIT.js', function() {
     var fn = jit.compile(function() {
       if (this.arch === 'x64') {
         this.push('rbp');
-        this.mov('rsp', 'rbp');
-        this.mov(42, 'rax');
-        this.mov('rbp', 'rsp');
+        this.movq('rsp', 'rbp');
+        this.movq(42, 'rax');
+        this.movq('rbp', 'rsp');
         this.pop('rbp');;
         this.ret();
       }
