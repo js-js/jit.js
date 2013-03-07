@@ -1,0 +1,14 @@
+{
+  "name": "jit.js",
+  "version": "0.0.1",
+  "main": "lib/jit.js",
+  "devDependencies": {
+    "mocha": "~1.8.1"
+  },
+  "scripts": {
+    "test": "mocha --reporter spec test/*-test.js"
+  },
+  "dependencies": {
+    "bindings": "~1.1.0"
+  }
+}
