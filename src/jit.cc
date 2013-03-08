@@ -32,6 +32,9 @@ class ExecInfo : public ObjectWrap {
     if (sym_execinfo_.IsEmpty()) {
       sym_execinfo_ = Persistent<String>::New(String::NewSymbol("_execinfo"));
     }
+    if (sym_raw_.IsEmpty()) {
+      sym_raw_ = Persistent<String>::New(String::NewSymbol("raw"));
+    }
   }
 
   ~ExecInfo() {
@@ -49,6 +52,12 @@ class ExecInfo : public ObjectWrap {
     Wrap(obj);
 
     fn->Set(sym_execinfo_, obj);
+
+    Buffer* buf = Buffer::New(reinterpret_cast<char*>(exec_),
+                              elen_,
+                              DeallocateRaw,
+                              this);
+    fn->Set(sym_raw_, buf->handle_);
 
     return scope.Close(t->GetFunction());
   }
@@ -83,6 +92,10 @@ class ExecInfo : public ObjectWrap {
     return Number::New(ret);
   }
 
+  static void DeallocateRaw(char* data, void* hint) {
+    // Do nothing
+  }
+
   void* exec_;
   size_t elen_;
   void* guard_;
@@ -90,11 +103,13 @@ class ExecInfo : public ObjectWrap {
 
   static Persistent<ObjectTemplate> obj_template_;
   static Persistent<String> sym_execinfo_;
+  static Persistent<String> sym_raw_;
 };
 
 
 Persistent<ObjectTemplate> ExecInfo::obj_template_;
 Persistent<String> ExecInfo::sym_execinfo_;
+Persistent<String> ExecInfo::sym_raw_;
 
 
 inline size_t GetPageSize() {
