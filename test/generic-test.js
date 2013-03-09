@@ -4,23 +4,14 @@ var jit = require('..'),
 describe('JIT.js generic', function() {
   it('should compile basic function', function() {
     var fn = jit.compile(function() {
+      this.Entry();
       if (this.arch === 'x64') {
-        this.push('rbp');
-        this.movq('rsp', 'rbp');
         this.movq(42, 'rax');
-        this.movq('rbp', 'rsp');
-        this.nop();
-        this.pop('rbp');;
-        this.ret();
       } else if (this.arch === 'ia32') {
-        this.push('ebp');
-        this.movl('esp', 'ebp');
         this.movl(42, 'eax');
-        this.movl('ebp', 'esp');
-        this.nop();
-        this.pop('ebp');;
-        this.ret();
       }
+      this.nop();
+      this.Exit();
     });
 
     assert.equal(fn(), 42);
