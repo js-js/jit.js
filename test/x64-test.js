@@ -78,6 +78,10 @@ describe('JIT.js x64', function() {
       this.cmp('rcx', 0);
 
       this.j('ne', 'loop');
+
+      // Just to test jumping
+      this.jl('out');
+      this.bind('out');
     });
 
     this.Exit();
