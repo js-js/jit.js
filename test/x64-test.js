@@ -86,4 +86,17 @@ describe('JIT.js x64', function() {
 
     this.Exit();
   }, 10);
+
+  test('should support procedures', function() {
+    this.labelScope(function() {
+      this.Entry();
+      this.call('rax', 'proc');
+      this.Exit();
+
+      this.bind('proc');
+      this.Entry();
+      this.mov('rax', 42);
+      this.Exit();
+    });
+  }, 42);
 });

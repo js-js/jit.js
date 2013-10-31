@@ -46,18 +46,19 @@ class ExecInfo : public ObjectWrap {
     HandleScope scope;
 
     Local<FunctionTemplate> t = FunctionTemplate::New(Exec);
+    NODE_SET_METHOD(t, "getAbsoluteOffset", GetAbsoluteOffset);
     Local<Function> fn = t->GetFunction();
 
     Local<Object> obj = obj_template_->NewInstance();
     Wrap(obj);
 
-    fn->Set(sym_execinfo_, obj);
+    fn->SetHiddenValue(sym_execinfo_, obj);
 
     Buffer* buf = Buffer::New(reinterpret_cast<char*>(exec_),
                               elen_,
                               DeallocateRaw,
                               this);
-    fn->Set(sym_raw_, buf->handle_);
+    fn->Set(sym_raw_, buf->handle_, ReadOnly);
 
     return scope.Close(t->GetFunction());
   }
@@ -69,8 +70,7 @@ class ExecInfo : public ObjectWrap {
     assert(args.Callee()->IsFunction());
     Local<Function> fn = args.Callee().As<Function>();
 
-    assert(fn->Has(sym_execinfo_));
-    Local<Object> info_obj = fn->Get(sym_execinfo_).As<Object>();
+    Local<Object> info_obj = fn->GetHiddenValue(sym_execinfo_).As<Object>();
     ExecInfo* info = ObjectWrap::Unwrap<ExecInfo>(info_obj);
 
     intptr_t ret;
@@ -90,6 +90,26 @@ class ExecInfo : public ObjectWrap {
     }
 
     return Number::New(ret);
+  }
+
+  static Handle<Value> GetAbsoluteOffset(const Arguments& args) {
+    HandleScope scope;
+
+    if (args.Length() < 1 || !args[0]->IsNumber()) {
+      return ThrowException(Exception::TypeError(String::New(
+          "First argument should be a Number!")));
+    }
+
+    assert(args.This()->IsFunction());
+    Local<Function> fn = args.This().As<Function>();
+
+    Local<Object> info_obj = fn->GetHiddenValue(sym_execinfo_).As<Object>();
+    ExecInfo* info = ObjectWrap::Unwrap<ExecInfo>(info_obj);
+
+    intptr_t addr = reinterpret_cast<intptr_t>(info->exec_);
+    addr += args[0]->IntegerValue();
+
+    return Buffer::New(reinterpret_cast<char*>(&addr), sizeof(addr))->handle_;
   }
 
   static void DeallocateRaw(char* data, void* hint) {
