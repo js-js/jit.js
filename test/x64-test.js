@@ -99,4 +99,13 @@ describe('JIT.js x64', function() {
       this.Exit();
     });
   }, 42);
+
+  test('should support accesing stack', function() {
+    this.Entry(1);
+
+    var slot = ['rbp', -8];
+    this.mov(slot, 42);
+    this.mov('rax', slot);
+    this.Exit();
+  }, 42);
 });
