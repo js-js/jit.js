@@ -64,4 +64,22 @@ describe('JIT.js x64', function() {
 
     this.Exit();
   }, 12);
+
+  test('should support branching', function() {
+    this.Entry();
+
+    this.xor('rax', 'rax');
+    this.mov('rcx', 10);
+    this.labelScope(function() {
+      this.bind('loop');
+
+      this.inc('rax');
+      this.dec('rcx');
+      this.cmp('rcx', 0);
+
+      this.j('ne', 'loop');
+    });
+
+    this.Exit();
+  }, 10);
 });
