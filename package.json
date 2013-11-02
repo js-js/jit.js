@@ -9,7 +9,7 @@
     "mocha": "~1.8.1"
   },
   "scripts": {
-    "test": "mocha --reporter spec test/*-test.js"
+    "test": "mocha --recursive --reporter spec test/"
   },
   "dependencies": {
     "bindings": "~1.1.0"
