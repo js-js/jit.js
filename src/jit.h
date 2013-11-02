@@ -16,6 +16,7 @@ class ExecInfo : public node::ObjectWrap {
   static v8::Handle<v8::Value> New(const v8::Arguments& args);
   static v8::Handle<v8::Value> Exec(const v8::Arguments& args);
   static v8::Handle<v8::Value> GetAbsoluteOffset(const v8::Arguments& args);
+  static v8::Handle<v8::Value> GetPointer(const v8::Arguments& args);
 
   void* exec_;
   void* guard_;

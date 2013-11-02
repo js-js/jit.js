@@ -49,7 +49,8 @@ ExecInfo::~ExecInfo() {
 Handle<Value> ExecInfo::New(const Arguments& args) {
   HandleScope scope;
 
-  if (args.Length() < 1 || !args[0]->IsObject() ||
+  if (args.Length() < 1 ||
+      !args[0]->IsObject() ||
       !Buffer::HasInstance(args[0].As<Object>())) {
     return ThrowException(Exception::TypeError(String::New(
         "First argument should be Buffer!")));
@@ -150,6 +151,22 @@ Handle<Value> ExecInfo::GetAbsoluteOffset(const Arguments& args) {
 }
 
 
+Handle<Value> ExecInfo::GetPointer(const Arguments& args) {
+  HandleScope scope;
+
+  if (args.Length() < 1 ||
+      !args[0]->IsObject() ||
+      !Buffer::HasInstance(args[0].As<Object>())) {
+    return ThrowException(Exception::TypeError(String::New(
+        "First argument should be Buffer!")));
+  }
+
+  char* data = Buffer::Data(args[0].As<Object>());
+
+  return Buffer::New(reinterpret_cast<char*>(&data), sizeof(&data))->handle_;
+}
+
+
 void ExecInfo::Init(Handle<Object> target) {
   HandleScope scope;
 
@@ -163,6 +180,8 @@ void ExecInfo::Init(Handle<Object> target) {
   NODE_SET_PROTOTYPE_METHOD(t, "getAbsoluteOffset", GetAbsoluteOffset);
 
   target->Set(String::NewSymbol("ExecInfo"), t->GetFunction());
+
+  NODE_SET_METHOD(target, "getPointer", GetPointer);
 }
 
 } // namespace jit

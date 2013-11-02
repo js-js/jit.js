@@ -1,8 +1,11 @@
 var common = require('../common'),
-    test = common.test;
+    test = common.test,
+    Buffer = require('buffer').Buffer;
 
 if (process.arch !== 'x64')
   return;
+
+var buf = new Buffer([7, 6, 5, 4, 3, 2, 1, 0]);
 
 describe('JIT.js x64 Basics', function() {
   test('should compile function with high registers', function() {
@@ -28,4 +31,11 @@ describe('JIT.js x64 Basics', function() {
     this.mov('rax', slot);
     this.Exit();
   }, 42);
+
+  test('should support this.ptr()', function() {
+    this.Entry();
+    this.mov('rax', this.ptr(buf));
+    this.mov('rax', ['rax']);
+    this.Exit();
+  }, 0x1020304050607);
 });
