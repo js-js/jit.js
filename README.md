@@ -6,9 +6,10 @@
 var jit = require('jit.js');
 
 var fn = jit.compile(function() {
-  this.Entry();
-  this.mov('rax', 42);
-  this.Exit();
+  this.Proc(function() {
+    this.mov('rax', 42);
+    this.Exit();
+  });
 });
 
 console.log(fn());  // 42
