@@ -30,8 +30,7 @@ describe('JIT.js x64 Branching', function() {
       this.call('rax', 'proc');
       this.Exit();
 
-      this.bind('proc');
-      this.Proc(function() {
+      this.Proc('proc', function() {
         this.mov('rax', 42);
         this.Exit();
       });
