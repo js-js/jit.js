@@ -16,7 +16,6 @@ describe('JIT.js x64 Stub', function() {
       this.Exit();
     });
 
-    this.int3();
     this.mov('rax', 20);
     this.mov('rbx', 32);
     this.stub('rcx', 'sum');
