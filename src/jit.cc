@@ -32,6 +32,11 @@ inline size_t RoundUp(size_t a, size_t b) {
 }
 
 
+inline Buffer* GetPointerBuffer(void* ptr) {
+  return Buffer::New(reinterpret_cast<char*>(&ptr), sizeof(&ptr));
+}
+
+
 ExecInfo::ExecInfo(void* exec, size_t elen, void* guard, size_t glen)
       : exec_(exec),
         guard_(guard),
@@ -147,7 +152,7 @@ Handle<Value> ExecInfo::GetAbsoluteOffset(const Arguments& args) {
   intptr_t addr = reinterpret_cast<intptr_t>(info->exec_);
   addr += args[0]->IntegerValue();
 
-  return Buffer::New(reinterpret_cast<char*>(&addr), sizeof(addr))->handle_;
+  return scope.Close(GetPointerBuffer(reinterpret_cast<void*>(addr))->handle_);
 }
 
 
@@ -163,7 +168,7 @@ Handle<Value> ExecInfo::GetPointer(const Arguments& args) {
 
   char* data = Buffer::Data(args[0].As<Object>());
 
-  return Buffer::New(reinterpret_cast<char*>(&data), sizeof(&data))->handle_;
+  return scope.Close(GetPointerBuffer(reinterpret_cast<void*>(data))->handle_);
 }
 
 
@@ -184,6 +189,91 @@ void ExecInfo::Init(Handle<Object> target) {
   NODE_SET_METHOD(target, "getPointer", GetPointer);
 }
 
+
+Runtime::Runtime(Handle<Function> fn) {
+  fn_ = Persistent<Function>::New(fn);
+}
+
+
+Runtime::~Runtime() {
+  fn_.Dispose();
+  fn_.Clear();
+}
+
+
+Handle<Value> Runtime::New(const Arguments& args) {
+  HandleScope scope;
+
+  if (args.Length() < 1 || !args[0]->IsFunction()) {
+    return ThrowException(Exception::TypeError(String::New(
+        "First argument should be a Function!")));
+  }
+
+  Runtime* rt = new Runtime(args[0].As<Function>());
+  rt->Wrap(args.This());
+
+  return scope.Close(args.This());
+}
+
+
+Handle<Value> Runtime::GetCallAddress(const Arguments& args) {
+  HandleScope scope;
+
+  intptr_t (jit::Runtime::* invoke)(intptr_t, intptr_t, intptr_t, intptr_t);
+  invoke = &Runtime::Invoke;
+
+  return scope.Close(GetPointerBuffer(
+      *reinterpret_cast<void**>(&invoke))->handle_);
+}
+
+
+Handle<Value> Runtime::GetCallArgument(const Arguments& args) {
+  HandleScope scope;
+
+  Runtime* rt = ObjectWrap::Unwrap<Runtime>(args.This());
+
+  return scope.Close(GetPointerBuffer(reinterpret_cast<void*>(rt))->handle_);
+}
+
+
+intptr_t Runtime::Invoke(intptr_t arg0,
+                         intptr_t arg1,
+                         intptr_t arg2,
+                         intptr_t arg3) {
+  HandleScope scope;
+
+  intptr_t args[] = { arg0, arg1, arg2, arg3 };
+  Handle<Value> argv[4];
+  for (int i = 0; i < 4; i++) {
+    if (args[i] == 0)
+      argv[i] = Number::New(0);
+    else
+      argv[i] = GetPointerBuffer(reinterpret_cast<void*>(args[i]))->handle_;
+  }
+
+  Local<Value> res = fn_->Call(Null().As<Object>(), 4, argv);
+
+  return static_cast<intptr_t>(res->IntegerValue());
+}
+
+void Runtime::Init(Handle<Object> target) {
+  HandleScope scope;
+
+  Local<FunctionTemplate> t = FunctionTemplate::New(New);
+  t->InstanceTemplate()->SetInternalFieldCount(1);
+
+  NODE_SET_PROTOTYPE_METHOD(t, "getCallAddress", GetCallAddress);
+  NODE_SET_PROTOTYPE_METHOD(t, "getCallArgument", GetCallArgument);
+
+  target->Set(String::NewSymbol("Runtime"), t->GetFunction());
+}
+
+
+static void Init(Handle<Object> target) {
+  ExecInfo::Init(target);
+  Runtime::Init(target);
+}
+
 } // namespace jit
 
-NODE_MODULE(jit, jit::ExecInfo::Init);
+NODE_MODULE(jit, jit::Init);
