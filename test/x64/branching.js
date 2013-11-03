@@ -6,8 +6,6 @@ if (process.arch !== 'x64')
 
 describe('JIT.js x64 Branching', function() {
   test('should support branching', function() {
-    this.Entry();
-
     this.xor('rax', 'rax');
     this.mov('rcx', 10);
     this.labelScope(function() {
@@ -29,14 +27,14 @@ describe('JIT.js x64 Branching', function() {
 
   test('should support procedures', function() {
     this.labelScope(function() {
-      this.Entry();
       this.call('rax', 'proc');
       this.Exit();
 
       this.bind('proc');
-      this.Entry();
-      this.mov('rax', 42);
-      this.Exit();
+      this.Proc(function() {
+        this.mov('rax', 42);
+        this.Exit();
+      });
     });
   }, 42);
 });

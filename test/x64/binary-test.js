@@ -6,8 +6,6 @@ if (process.arch !== 'x64')
 
 describe('JIT.js x64 Binary', function() {
   test('should support binary', function() {
-    this.Entry();
-
     this.mov('rax', 1);
     this.shl('rax', 3);
     this.mov('rbx', 2);

@@ -5,6 +5,8 @@ exports.jit = jit;
 
 exports.test = function test(name, fn, result) {
   it(name, function() {
-    assert.equal(jit.compile(fn)(), result);
+    assert.equal(jit.compile(function() {
+      this.Proc(fn);
+    })(), result);
   });
 };

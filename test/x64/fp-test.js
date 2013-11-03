@@ -6,8 +6,6 @@ if (process.arch !== 'x64')
 
 describe('JIT.js x64 Floating Point', function() {
   test('should support fp', function() {
-    this.Entry();
-
     this.loadDouble('rax', 13589.13589);
     this.movq('xmm1', 'rax');
     this.movq('r8', 'xmm1');

@@ -6,8 +6,6 @@ if (process.arch !== 'x64')
 
 describe('JIT.js x64 Math', function() {
   test('should support math basics', function() {
-    this.Entry();
-
     // 12 * 14
     this.mov('r8', 12);
     this.mov('rax', 14);

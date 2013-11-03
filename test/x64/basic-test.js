@@ -9,8 +9,6 @@ var buf = new Buffer([7, 6, 5, 4, 3, 2, 1, 0]);
 
 describe('JIT.js x64 Basics', function() {
   test('should compile function with high registers', function() {
-    this.Entry();
-
     this.xor('r11', 'r11');
     this.push('r11');
     this.mov('r11', 34);
@@ -24,16 +22,26 @@ describe('JIT.js x64 Basics', function() {
   }, 42);
 
   test('should support accesing stack', function() {
-    this.Entry(1);
+    this.spill(function(slot) {
+      this.mov(slot, 42);
+      this.mov('rax', slot);
+    });
 
-    var slot = ['rbp', -8];
-    this.mov(slot, 42);
-    this.mov('rax', slot);
+    this.Exit();
+  }, 42);
+
+  test('should support accesing multiple slots', function() {
+    this.spill(2, function(slots) {
+      this.mov(slots[0], 42);
+      this.mov(slots[1], 23);
+      this.mov('rax', slots[0]);
+      this.mov('rbx', slots[1]);
+    });
+
     this.Exit();
   }, 42);
 
   test('should support this.ptr()', function() {
-    this.Entry();
     this.mov('rax', this.ptr(buf));
     this.mov('rax', ['rax']);
     this.Exit();
