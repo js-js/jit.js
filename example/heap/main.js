@@ -42,14 +42,21 @@ function visitProgram(ast) {
 
   // We've a pointer in 'rax', convert it to integer
   visit.call(this, ast.body[0].expression);
+
+  // Get floating point number out of heap number
   this.movq('xmm1', ['rax', 8]);
+
+  // Round it towards zero
   this.roundsd('zero', 'xmm1', 'xmm1');
+
+  // Convert double to integer
   this.cvtsd2si('rax', 'xmm1');
 }
 
 function visitLiteral(ast) {
   assert.equal(typeof ast.value, 'number');
 
+  // Allocate new heap number
   this.stub('rax', 'alloc');
 
   // Save 'rbx' register
