@@ -166,7 +166,11 @@ Handle<Value> ExecInfo::GetPointer(const Arguments& args) {
         "First argument should be Buffer!")));
   }
 
-  char* data = Buffer::Data(args[0].As<Object>());
+  int64_t offset = 0;
+  if (args.Length() == 2)
+    offset = args[1]->IntegerValue();
+
+  char* data = Buffer::Data(args[0].As<Object>()) + offset;
 
   return scope.Close(GetPointerBuffer(reinterpret_cast<void*>(data))->handle_);
 }
