@@ -7,6 +7,8 @@ exports.test = function test(name, fn, result) {
   it(name, function() {
     assert.equal(jit.compile(function() {
       this.Proc(fn);
+    }, {
+      stubs: jit.stubs()
     })(), result);
   });
 };
