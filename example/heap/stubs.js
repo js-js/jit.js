@@ -11,6 +11,7 @@ var offset = jit.ptr(page);
 var end = jit.ptr(page, page.length);
 
 stubs.define('Alloc', function() {
+  this.int3();
 
   // Save 'rbx' and 'rbx' registers
   this.spill(['rbx', 'rcx'], function() {
@@ -47,25 +48,25 @@ stubs.define('Alloc', function() {
 
     // First 64bit pointer is reserved for 'tag', second one is a `double` value
     this.mov(['rax'], 1);
+
+    // Return 'rax'
+    this.Return();
+
+    // Overflowed :(
+    this.bind('overflow')
+
+    // Invoke javascript function!
+    // NOTE: This is really funky stuff, but I'm not going to dive deep
+    // into it right now
+    this.runtime(function() {
+      console.log('GC is needed, but not implemented');
+    });
+
+    // Crash
+    this.int3();
+
+    this.Return();
   });
-
-  // Return 'rax'
-  this.Return();
-
-  // Overflowed :(
-  this.bind('overflow')
-
-  // Invoke javascript function!
-  // NOTE: This is really funky stuff, but I'm not going to dive deep
-  // into it right now
-  this.runtime(function() {
-    console.log('GC is needed, but not implemented');
-  });
-
-  // Crash
-  this.int3();
-
-  this.Return();
 });
 
 module.exports = stubs;
