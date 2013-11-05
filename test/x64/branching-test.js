@@ -22,17 +22,17 @@ describe('JIT.js x64 Branching', function() {
       this.bind('out');
     });
 
-    this.Exit();
+    this.Return();
   }, 10);
 
   test('should support procedures', function() {
     this.labelScope(function() {
       this.call('rax', 'proc');
-      this.Exit();
+      this.Return();
 
       this.Proc('proc', function() {
         this.mov('rax', 42);
-        this.Exit();
+        this.Return();
       });
     });
   }, 42);

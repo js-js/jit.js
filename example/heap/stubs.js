@@ -39,7 +39,7 @@ stubs.define('alloc', function() {
   });
 
   // Return 'rax'
-  this.Exit();
+  this.Return();
 
   // Overflowed :(
   this.bind('overflow')
@@ -50,7 +50,7 @@ stubs.define('alloc', function() {
   // Crash
   this.int3();
 
-  this.Exit();
+  this.Return();
 });
 
 module.exports = stubs;

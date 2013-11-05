@@ -14,7 +14,7 @@ var fn = jit.compile(function() {
     // The result should be in 'rax' at this point
     //
     // This will generate default exit boilerplate
-    this.Exit();
+    this.Return();
   });
 });
 

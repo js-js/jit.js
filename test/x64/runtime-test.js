@@ -21,6 +21,6 @@ describe('JIT.js x64 Runtime', function() {
       called++;
       return 42;
     });
-    this.Exit();
+    this.Return();
   }, 42);
 });

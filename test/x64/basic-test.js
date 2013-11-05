@@ -18,7 +18,7 @@ describe('JIT.js x64 Basics', function() {
     this.sub('rax', 'r11');
     this.add('rax', 'rax');
 
-    this.Exit();
+    this.Return();
   }, 42);
 
   test('should support accesing stack', function() {
@@ -27,7 +27,7 @@ describe('JIT.js x64 Basics', function() {
       this.mov('rax', slot);
     });
 
-    this.Exit();
+    this.Return();
   }, 42);
 
   test('should support accesing multiple slots', function() {
@@ -38,12 +38,12 @@ describe('JIT.js x64 Basics', function() {
       this.mov('rbx', slots[1]);
     });
 
-    this.Exit();
+    this.Return();
   }, 42);
 
   test('should support this.ptr()', function() {
     this.mov('rax', this.ptr(buf));
     this.mov('rax', ['rax']);
-    this.Exit();
+    this.Return();
   }, 0x1020304050607);
 });

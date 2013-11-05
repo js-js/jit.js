@@ -8,12 +8,12 @@ describe('JIT.js x64 Stub', function() {
   test('should support stubs', function() {
     this.stubs.define('sum', function() {
       this.add('rax', 'rbx');
-      this.Exit();
+      this.Return();
     });
 
     this.stubs.define('sub', function() {
       this.sub('rax', 'rbx');
-      this.Exit();
+      this.Return();
     });
 
     this.mov('rax', 20);
@@ -21,6 +21,6 @@ describe('JIT.js x64 Stub', function() {
     this.stub('rcx', 'sum');
     this.mov('rbx', 10);
     this.stub('rcx', 'sub');
-    this.Exit();
+    this.Return();
   }, 42);
 });

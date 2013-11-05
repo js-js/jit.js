@@ -15,6 +15,6 @@ describe('JIT.js x64 Floating Point', function() {
     this.cvtsd2si('r8', 'xmm1');
     this.xchg('r8', 'rax');
 
-    this.Exit();
+    this.Return();
   }, 184664615);
 });

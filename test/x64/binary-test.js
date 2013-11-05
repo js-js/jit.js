@@ -14,6 +14,6 @@ describe('JIT.js x64 Binary', function() {
     this.or('rax', 2);
     this.and('rax', 13);
 
-    this.Exit();
+    this.Return();
   }, 12);
 });

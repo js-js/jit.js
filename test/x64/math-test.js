@@ -26,6 +26,6 @@ describe('JIT.js x64 Math', function() {
     this.mov('r8', 5);
     this.idiv('r8');
 
-    this.Exit();
+    this.Return();
   }, 34);
 });
