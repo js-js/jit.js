@@ -10,7 +10,7 @@ var page = new Buffer(1024);
 var offset = jit.ptr(page);
 var end = jit.ptr(page, page.length);
 
-stubs.define('alloc', function() {
+stubs.define('Alloc', function() {
 
   // Save 'rbx' and 'rbx' registers
   this.spill(['rbx', 'rcx'], function() {

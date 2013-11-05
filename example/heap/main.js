@@ -57,7 +57,7 @@ function visitLiteral(ast) {
   assert.equal(typeof ast.value, 'number');
 
   // Allocate new heap number
-  this.stub('rax', 'alloc');
+  this.stub('rax', 'Alloc');
 
   // Save 'rbx' register
   this.spill('rbx', function() {
@@ -100,7 +100,7 @@ function visitBinary(ast) {
     }
 
     // Allocate new number, and put value in it
-    this.stub('rax', 'alloc');
+    this.stub('rax', 'Alloc');
     this.movq(['rax', 8], 'xmm1');
   });
 }
