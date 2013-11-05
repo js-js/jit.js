@@ -3,14 +3,14 @@ var Buffer = require('buffer').Buffer;
 
 var stubs = jit.stubs();
 
+// Fixed size memory chunk
 var page = new Buffer(1024);
-var offset;
-var end;
+
+// Set-up pointers to page start and page end
+var offset = jit.ptr(page);
+var end = jit.ptr(page, page.length);
 
 stubs.define('alloc', function() {
-  // Set-up pointers to page start and page end
-  offset = this.ptr(page);
-  end = this.ptr(page, page.length);
 
   // Save 'rbx' and 'rbx' registers
   this.spill(['rbx', 'rcx'], function() {
