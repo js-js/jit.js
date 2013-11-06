@@ -13,7 +13,7 @@ var end = jit.ptr(page, page.length);
 stubs.define('Alloc', function() {
   this.int3();
 
-  // Save 'rbx' and 'rbx' registers
+  // Save 'rbx' and 'rcx' registers
   this.spill(['rbx', 'rcx'], function() {
     // Load `offset`
     //
