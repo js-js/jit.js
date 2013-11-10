@@ -34,4 +34,16 @@ describe('JIT.js x64 Stub', function() {
     this.stub('rcx', 'sum', 22);
     this.Return();
   }, 42);
+
+  test('should support stubs with runtime calls', function() {
+    this.stubs.define('sum', function() {
+      this.runtime(function() {
+        return 42;
+      });
+      this.Return();
+    });
+
+    this.stub('rcx', 'sum');
+    this.Return();
+  }, 42);
 });
