@@ -1,0 +1,18 @@
+{
+  "name": "jit.js-basic",
+  "version": "0.0.0",
+  "private": true,
+  "description": "",
+  "bin": {
+    "jit.js-basic": "main.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "esprima": "~1.0.4",
+    "jit.js": "~0.5.0"
+  }
+}

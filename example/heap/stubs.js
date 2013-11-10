@@ -1,6 +1,7 @@
 var jit = require('jit.js');
 var Buffer = require('buffer').Buffer;
 
+var utils = require('./utils');
 var stubs = jit.stubs();
 
 // Create fixed size memory chunk
@@ -11,8 +12,6 @@ var offset = jit.ptr(page);
 var end = jit.ptr(page, page.length);
 
 stubs.define('Alloc', function() {
-  this.int3();
-
   // Save 'rbx' and 'rcx' registers
   this.spill(['rbx', 'rcx'], function() {
     // Load `offset`
