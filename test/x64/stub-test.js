@@ -23,4 +23,15 @@ describe('JIT.js x64 Stub', function() {
     this.stub('rcx', 'sub');
     this.Return();
   }, 42);
+
+  test('should support stubs with arguments', function() {
+    this.stubs.define('sum', function(arg) {
+      this.add('rax', arg);
+      this.Return();
+    });
+
+    this.mov('rax', 20);
+    this.stub('rcx', 'sum', 22);
+    this.Return();
+  }, 42);
 });
