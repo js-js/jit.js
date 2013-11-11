@@ -8,7 +8,7 @@ var jit = require('jit.js');
 var fn = jit.compile(function() {
   this.Proc(function() {
     this.mov('rax', 42);
-    this.Exit();
+    this.Return();
   });
 });
 
