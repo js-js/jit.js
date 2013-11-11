@@ -68,7 +68,8 @@ function visitLiteral(ast) {
   assert.equal(typeof ast.value, 'number');
 
   if ((ast.value | 0) === ast.value) {
-    // Integer
+    // Small Integer (SMI), Tagged value (i.e. val * 2) with last bit set to
+    // zero
     this.mov('rax', utils.tagSmi(ast.value));
   } else {
     // Allocate new heap number
@@ -77,6 +78,9 @@ function visitLiteral(ast) {
     // Save 'rbx' register
     this.spill('rbx', function() {
       this.loadDouble('rbx', ast.value);
+
+      // NOTE: Pointers have last bit set to 1
+      // That's why we need to use `heapOffset` routine to access it's memory
       this.mov(this.heapOffset('rax', 0), 'rbx');
     });
   }
@@ -112,6 +116,10 @@ function visitBinary(ast) {
         // Save rax in case of overflow
         this.mov('rcx', 'rax');
 
+        // NOTE: both 'rax' and 'rbx' are tagged at this point
+        // Tags don't need to be removed if we're doing addition or
+        // substraction. However, in case of multiplication result would be
+        // 2x bigger if we won't untag one of the arguments.
         if (ast.operator === '+') {
           this.add('rax', 'rbx');
         } else if (ast.operator === '-') {
