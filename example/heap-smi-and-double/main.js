@@ -109,16 +109,30 @@ function visitBinary(ast) {
         this.checkSmi('rbx');
         this.j('ne', 'call stub');
 
-        if (ast.operator === '+')
-          this.add('rax', 'rbx');
-        else if (ast.operator === '-')
-          this.sub('rax', 'rbx');
-        else if (ast.operator === '*')
-          this.mul('rbx');
+        // Save rax in case of overflow
+        this.mov('rcx', 'rax');
 
+        if (ast.operator === '+') {
+          this.add('rax', 'rbx');
+        } else if (ast.operator === '-') {
+          this.sub('rax', 'rbx');
+        } else if (ast.operator === '*') {
+          this.untagSmi('rax');
+          this.mul('rbx');
+        }
+
+        // On overflow restore `rax` from `rcx` and invoke stub
+        this.j('o', 'restore');
+
+        // Otherwise return 'rax'
         this.j('done');
+        this.bind('restore');
+
+        this.mov('rax', 'rcx');
+
         this.bind('call stub');
 
+        // Invoke stub and return heap number in 'rax'
         this.stub('rax', 'Binary' + ast.operator, 'rax', 'rbx');
 
         this.bind('done');
