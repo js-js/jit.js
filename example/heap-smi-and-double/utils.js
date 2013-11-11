@@ -1,12 +1,22 @@
+// Export some static non-Masm helpers
+
 exports.tagSmi = function tagSmi(value) {
   return value << 1;
 };
 
-exports.untagSmi = function untagSmi(reg) {
+// Export some Masm helpers
+
+exports.helpers = {
+  untagSmi: untagSmi,
+  checkSmi: checkSmi,
+  heapOffset: heapOffset
+};
+
+function untagSmi(reg) {
   this.shr(reg, 1);
 };
 
-exports.checkSmi = function checkSmi(value, t, f) {
+function checkSmi(value, t, f) {
   if (!t && !f)
     return this.test(value, 1);
 
@@ -21,6 +31,6 @@ exports.checkSmi = function checkSmi(value, t, f) {
   });
 };
 
-exports.heapOffset = function heapOffset(reg, offset) {
+function heapOffset(reg, offset) {
   return [reg, 8 * ((offset | 0) + 1) - 1];
 };

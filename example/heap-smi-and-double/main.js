@@ -10,11 +10,6 @@ var utils = require('./utils');
 
 // Compile
 var fn = jit.compile(function() {
-  // Export some functions from utils
-  this.checkSmi = utils.checkSmi;
-  this.untagSmi = utils.untagSmi;
-  this.heapOffset = utils.heapOffset;
-
   // This will generate default entry boilerplate
   this.Proc(function() {
     visit.call(this, ast);
@@ -24,7 +19,7 @@ var fn = jit.compile(function() {
     // This will generate default exit boilerplate
     this.Return();
   });
-}, { stubs: stubs });
+}, { stubs: stubs, helpers: utils.helpers });
 
 // Execute
 console.log(fn());

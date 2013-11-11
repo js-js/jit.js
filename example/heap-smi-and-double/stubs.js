@@ -2,7 +2,7 @@ var jit = require('jit.js');
 var Buffer = require('buffer').Buffer;
 
 var utils = require('./utils');
-var stubs = jit.stubs();
+var stubs = jit.stubs({ helpers: utils.helpers });
 
 // Create fixed size memory chunk
 var page = new Buffer(1024);
@@ -74,14 +74,10 @@ stubs.define('Alloc', function(size, tag) {
 });
 
 var operators = ['+', '-', '*', '/'];
+var map = { '+': 'addsd', '-': 'subsd', '*': 'mulsd', '/': 'divsd' };
 operators.forEach(function(operator) {
   stubs.define('Binary' + operator, function(left, right) {
-    // Load some helper methods
-    this.checkSmi = utils.checkSmi;
-    this.untagSmi = utils.untagSmi;
-    this.heapOffset = utils.heapOffset;
-    this.untagSmi = utils.untagSmi;
-
+    // Save 'rbx' and 'rcx'
     this.spill(['rbx', 'rcx'], function() {
       // Load arguments to rax and rbx
       this.mov('rax', left);
@@ -106,17 +102,13 @@ operators.forEach(function(operator) {
         this.bind(done);
       }, this);
 
+      var instr = map[operator];
+
       // Execute binary operation
-      if (operator === '+')
-        this.addsd('xmm1', 'xmm2');
-      else if (operator === '-')
-        this.subsd('xmm1', 'xmm2');
-      else if (operator === '*')
-        this.mulsd('xmm1', 'xmm2');
-      else if (operator === '/')
-        this.divsd('xmm1', 'xmm2');
+      if (instr)
+        this[instr]('xmm1', 'xmm2');
       else
-        throw new Error('Unsupported binary operator: ' + ast.operator);
+        throw new Error('Unsupported binary operator: ' + operator);
 
       // Allocate new number, and put value in it
       this.stub('rax', 'Alloc', 8, 1);
