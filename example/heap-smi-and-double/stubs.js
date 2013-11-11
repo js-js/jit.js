@@ -89,20 +89,21 @@ operators.forEach(function(operator) {
 
       // Convert both numbers to doubles
       [['rax', 'xmm1'], ['rbx', 'xmm2']].forEach(function(regs) {
-        this.labelScope(function() {
-          this.checkSmi(regs[0]);
-          this.j('ne', 'non-smi');
+        var nonSmi = this.label();
+        var done = this.label();
 
-          // Convert integer to double
-          this.untagSmi(regs[0]);
-          this.cvtsi2sd(regs[1], regs[0]);
+        this.checkSmi(regs[0]);
+        this.j('ne', nonSmi);
 
-          this.j('done');
-          this.bind('non-smi');
+        // Convert integer to double
+        this.untagSmi(regs[0]);
+        this.cvtsi2sd(regs[1], regs[0]);
 
-          this.movq(regs[1], this.heapOffset(regs[0], 0));
-          this.bind('done');
-        });
+        this.j(done);
+        this.bind(nonSmi);
+
+        this.movq(regs[1], this.heapOffset(regs[0], 0));
+        this.bind(done);
       }, this);
 
       // Execute binary operation

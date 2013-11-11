@@ -25,6 +25,27 @@ describe('JIT.js x64 Branching', function() {
     this.Return();
   }, 10);
 
+  test('should support branching without scpe', function() {
+    this.xor('rax', 'rax');
+    this.mov('rcx', 10);
+
+    var loop = this.label();
+    this.bind(loop);
+
+    this.inc('rax');
+    this.dec('rcx');
+    this.cmp('rcx', 0);
+
+    this.j('ne', loop);
+
+    // Just to test jumping
+    var out = this.label();
+    this.jl(out);
+    this.bind(out);
+
+    this.Return();
+  }, 10);
+
   test('should support procedures', function() {
     this.labelScope(function() {
       this.call('rax', 'proc');
