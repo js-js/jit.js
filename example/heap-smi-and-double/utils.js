@@ -22,7 +22,7 @@ function checkSmi(value, t, f) {
 
   this.labelScope(function() {
     this.test(value, 1);
-    this.j('ne', 'non-smi');
+    this.j('nz', 'non-smi');
     t.call(this);
     this.j('end');
     this.bind('non-smi');

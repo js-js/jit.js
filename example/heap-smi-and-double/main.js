@@ -104,9 +104,9 @@ function visitBinary(ast) {
       this.labelScope(function() {
         // Check if both numbers are SMIs
         this.checkSmi('rax');
-        this.j('ne', 'call stub');
+        this.j('nz', 'call stub');
         this.checkSmi('rbx');
-        this.j('ne', 'call stub');
+        this.j('nz', 'call stub');
 
         // Save rax in case of overflow
         this.mov('rcx', 'rax');

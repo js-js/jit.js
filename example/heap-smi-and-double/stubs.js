@@ -89,7 +89,7 @@ operators.forEach(function(operator) {
         var done = this.label();
 
         this.checkSmi(regs[0]);
-        this.j('ne', nonSmi);
+        this.j('nz', nonSmi);
 
         // Convert integer to double
         this.untagSmi(regs[0]);
