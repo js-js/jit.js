@@ -51,7 +51,7 @@ stubs.define('Alloc', function(size, tag) {
     this.mov(['rax'], 'rcx');
 
     // Tag pointer
-    this.sub('rax', 1);
+    this.or('rax', 1);
 
     // Return 'rax'
     this.Return();
