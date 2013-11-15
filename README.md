@@ -1,5 +1,7 @@
 # JIT Assembler [![Build Status](https://travis-ci.org/indutny/jit.js.png?branch=master)](https://travis-ci.org/indutny/jit.js)
 
+![Logo](https://raw.github.com/indutny/jit.js/master/logo/jit-small.png)
+
 ## Instructions
 
 ```javascript
