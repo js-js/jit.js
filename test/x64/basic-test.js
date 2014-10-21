@@ -46,4 +46,10 @@ describe('JIT.js x64 Basics', function() {
     this.mov('rax', ['rax']);
     this.Return();
   }, 0x1020304050607);
+
+  test('should support this.lea()', function() {
+    this.mov('rax', 0xad);
+    this.lea('rax', ['rax', 0xde00]);
+    this.Return();
+  }, 0xdead);
 });
