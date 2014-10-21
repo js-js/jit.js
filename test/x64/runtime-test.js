@@ -13,14 +13,14 @@ describe('JIT.js x64 Runtime', function() {
   });
 
   afterEach(function() {
-    assert.equal(called, 1);
+    assert.equal(called, 0x100);
   });
 
   test('should support runtime', function() {
-    this.runtime(function() {
-      called++;
+    this.runtime(function(arg) {
+      called += arg.readUInt32LE(0);
       return 42;
-    });
+    }, 0x100);
     this.Return();
   }, 42);
 });
