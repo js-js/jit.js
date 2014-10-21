@@ -135,16 +135,21 @@ intptr_t Runtime::Invoke(intptr_t arg0,
 
   intptr_t args[] = { arg0, arg1, arg2, arg3 };
   Handle<Value> argv[4];
-  for (int i = 0; i < 4; i++) {
-    if (args[i] == 0)
-      argv[i] = NanNew<Int32, int32_t>(0);
-    else
-      argv[i] = GetPointerBuffer(reinterpret_cast<void*>(args[i]));
+  for (int i = 0; i < 4; i++)
+    argv[i] = GetPointerBuffer(reinterpret_cast<void*>(args[i]));
+
+  TryCatch try_catch;
+  try_catch.SetVerbose(true);
+  Local<Value> res = fn_->Call(NanNull().As<Object>(), 4, argv);
+  if (try_catch.HasCaught()) {
+    node::FatalException(try_catch);
+    abort();
   }
 
-  Local<Value> res = fn_->Call(NanNull().As<Object>(), 4, argv);
-
-  return static_cast<intptr_t>(res->IntegerValue());
+  if (res->IsObject() && Buffer::HasInstance(res))
+    return *reinterpret_cast<intptr_t*>(Buffer::Data(res));
+  else
+    return static_cast<intptr_t>(res->Int32Value());
 }
 
 void Runtime::Init(Handle<Object> target) {
