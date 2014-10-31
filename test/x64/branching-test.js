@@ -57,4 +57,24 @@ describe('JIT.js x64 Branching', function() {
       });
     });
   }, 42);
+
+  test('should support set()', function() {
+    this.spill('rbx', function() {
+      this.xor('rbx', 'rbx');
+      this.mov('rax', 1);
+      this.shl('rax', 63);
+      this.mul('rax');
+
+      this.set('o', 'rbx');
+      this.shl('rbx', 1);
+      this.mov('rax', 'rbx');
+
+      this.test('rbx', 'rbx');
+
+      this.set('z', 'rbx');
+      this.or('rax', 'rbx');
+    });
+
+    this.Return();
+  }, 2);
 });

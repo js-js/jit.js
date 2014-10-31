@@ -16,11 +16,13 @@ describe('JIT.js x64 Stub', function() {
       this.Return();
     });
 
-    this.mov('rax', 20);
-    this.mov('rbx', 32);
-    this.stub('rcx', 'sum');
-    this.mov('rbx', 10);
-    this.stub('rcx', 'sub');
+    this.spill([ 'rbx', 'rcx' ], function() {
+      this.mov('rax', 20);
+      this.mov('rbx', 32);
+      this.stub('rcx', 'sum');
+      this.mov('rbx', 10);
+      this.stub('rcx', 'sub');
+    });
     this.Return();
   }, 42);
 
@@ -30,8 +32,10 @@ describe('JIT.js x64 Stub', function() {
       this.Return();
     });
 
-    this.mov('rax', 20);
-    this.stub('rcx', 'sum', 22);
+    this.spill('rcx', function() {
+      this.mov('rax', 20);
+      this.stub('rcx', 'sum', 22);
+    });
     this.Return();
   }, 42);
 
@@ -43,7 +47,9 @@ describe('JIT.js x64 Stub', function() {
       this.Return();
     });
 
-    this.stub('rcx', 'sum');
+    this.spill('rcx', function() {
+      this.stub('rcx', 'sum');
+    });
     this.Return();
   }, 42);
 });

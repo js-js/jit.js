@@ -31,12 +31,14 @@ describe('JIT.js x64 Basics', function() {
   }, 42);
 
   test('should support accesing multiple slots', function() {
+    this.push('rbx');
     this.spill(2, function(slots) {
       this.mov(slots[0], 42);
       this.mov(slots[1], 23);
       this.mov('rax', slots[0]);
       this.mov('rbx', slots[1]);
     });
+    this.pop('rbx');
 
     this.Return();
   }, 42);
