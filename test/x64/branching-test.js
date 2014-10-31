@@ -46,9 +46,21 @@ describe('JIT.js x64 Branching', function() {
     this.Return();
   }, 10);
 
-  test('should support procedures', function() {
+  test('should support procedures on low regs', function() {
     this.labelScope(function() {
       this.call('rax', 'proc');
+      this.Return();
+
+      this.Proc('proc', function() {
+        this.mov('rax', 42);
+        this.Return();
+      });
+    });
+  }, 42);
+
+  test('should support procedures on high regs', function() {
+    this.labelScope(function() {
+      this.call('r15', 'proc');
       this.Return();
 
       this.Proc('proc', function() {
@@ -79,7 +91,6 @@ describe('JIT.js x64 Branching', function() {
   }, 2);
 
   test('should support set() on high reg', function() {
-    this.int3();
     this.spill('r8', function() {
       this.xor('r8', 'r8');
       this.mov('rax', 1);
