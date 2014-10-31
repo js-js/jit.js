@@ -49,9 +49,17 @@ describe('JIT.js x64 Basics', function() {
     this.Return();
   }, 0x1020304050607);
 
-  test('should support this.lea()', function() {
+  test('should support this.lea() on low', function() {
     this.mov('rax', 0xad);
     this.lea('rax', ['rax', 0xde00]);
+    this.Return();
+  }, 0xdead);
+
+  test('should support this.lea() on high', function() {
+    this.spill('r12', function() {
+      this.mov('r12', 0xad);
+      this.lea('rax', ['r12', 0xde00]);
+    });
     this.Return();
   }, 0xdead);
 });
