@@ -58,7 +58,7 @@ describe('JIT.js x64 Branching', function() {
     });
   }, 42);
 
-  test('should support set()', function() {
+  test('should support set() on low reg', function() {
     this.spill('rbx', function() {
       this.xor('rbx', 'rbx');
       this.mov('rax', 1);
@@ -73,6 +73,27 @@ describe('JIT.js x64 Branching', function() {
 
       this.set('z', 'rbx');
       this.or('rax', 'rbx');
+    });
+
+    this.Return();
+  }, 2);
+
+  test('should support set() on high reg', function() {
+    this.int3();
+    this.spill('r8', function() {
+      this.xor('r8', 'r8');
+      this.mov('rax', 1);
+      this.shl('rax', 63);
+      this.mul('rax');
+
+      this.set('o', 'r8');
+      this.shl('r8', 1);
+      this.mov('rax', 'r8');
+
+      this.test('r8', 'r8');
+
+      this.set('z', 'r8');
+      this.or('rax', 'r8');
     });
 
     this.Return();
