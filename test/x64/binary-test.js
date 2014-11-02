@@ -6,7 +6,7 @@ if (process.arch !== 'x64')
 
 describe('JIT.js x64 Binary', function() {
   test('should support binary', function() {
-    this.spill('rbx', function() {
+    this.spill([ 'rbx', 'rcx' ], function() {
       this.mov('rax', 1);
       this.shl('rax', 3);
       this.mov('rbx', 2);
@@ -14,8 +14,12 @@ describe('JIT.js x64 Binary', function() {
       this.or('rax', 'rbx');
       this.or('rax', 2);
       this.and('rax', 13);
+      this.mov('rbx', 1);
+      this.mov('rcx', 5);
+      this.shl('rbx', 'rcx');
+      this.or('rax', 'rbx');
     });
 
     this.Return();
-  }, 12);
+  }, 44);
 });
