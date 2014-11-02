@@ -109,4 +109,18 @@ describe('JIT.js x64 Branching', function() {
 
     this.Return();
   }, 2);
+
+  test('should support cmov()', function() {
+    this.spill([ 'rbx', 'rcx' ], function() {
+      this.mov('rbx', 2);
+      this.mov('rcx', 3);
+
+      this.xor('rax', 'rax');
+      this.cmp('rax', 1);
+      this.cmov('l', 'rax', 'rbx');
+      this.cmov('ge', 'rax', 'rcx');
+    });
+
+    this.Return();
+  }, 2);
 });
