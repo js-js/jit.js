@@ -62,4 +62,13 @@ describe('JIT.js x64 Basics', function() {
     });
     this.Return();
   }, 0xdead);
+
+  test('should support complex this.lea()', function() {
+    this.spill('r9', function() {
+      this.mov('rax', 0x56);
+      this.mov('r9', 0x57);
+      this.lea('rax', ['rax', 'r9', 0xde00 ]);
+    });
+    this.Return();
+  }, 0xdead);
 });
