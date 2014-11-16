@@ -31,7 +31,8 @@ class Runtime : public node::ObjectWrap {
   static NAN_METHOD(New);
   static NAN_METHOD(GetCallAddress);
   static NAN_METHOD(GetCallArgument);
-  intptr_t Invoke(intptr_t arg0, intptr_t arg1, intptr_t arg2, intptr_t arg3);
+  intptr_t Invoke(intptr_t arg0, intptr_t arg1, intptr_t arg2, intptr_t arg3,
+                  intptr_t arg4, intptr_t arg5);
 
   v8::Persistent<v8::Function> fn_;
 };

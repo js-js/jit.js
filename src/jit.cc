@@ -112,7 +112,8 @@ NAN_METHOD(Runtime::New) {
 NAN_METHOD(Runtime::GetCallAddress) {
   NanScope();
 
-  intptr_t (jit::Runtime::* invoke)(intptr_t, intptr_t, intptr_t, intptr_t);
+  intptr_t (jit::Runtime::* invoke)(intptr_t, intptr_t, intptr_t, intptr_t,
+                                    intptr_t, intptr_t);
   invoke = &Runtime::Invoke;
 
   NanReturnValue(GetPointerBuffer(*reinterpret_cast<void**>(&invoke)));
@@ -131,17 +132,19 @@ NAN_METHOD(Runtime::GetCallArgument) {
 intptr_t Runtime::Invoke(intptr_t arg0,
                          intptr_t arg1,
                          intptr_t arg2,
-                         intptr_t arg3) {
+                         intptr_t arg3,
+                         intptr_t arg4,
+                         intptr_t arg5) {
   NanScope();
 
-  intptr_t args[] = { arg0, arg1, arg2, arg3 };
-  Handle<Value> argv[4];
-  for (int i = 0; i < 4; i++)
+  intptr_t args[] = { arg0, arg1, arg2, arg3, arg4, arg5 };
+  Handle<Value> argv[6];
+  for (int i = 0; i < 6; i++)
     argv[i] = GetPointerBuffer(reinterpret_cast<void*>(args[i]));
 
   TryCatch try_catch;
   try_catch.SetVerbose(true);
-  Local<Value> res = fn_->Call(NanNull().As<Object>(), 4, argv);
+  Local<Value> res = fn_->Call(NanNull().As<Object>(), 6, argv);
   if (try_catch.HasCaught()) {
     node::FatalException(try_catch);
     abort();
