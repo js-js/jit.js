@@ -31,4 +31,12 @@ describe('JIT.js x64 Runtime', function() {
     }, 0x100);
     this.Return();
   }, 0x100);
+
+  test('should support runtime with 6 args', function() {
+    this.runtime(function(a, b, c, d, e, f) {
+      called = 0x100;
+      return f.readUInt32LE(0);
+    }, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6);
+    this.Return();
+  }, 6);
 });
