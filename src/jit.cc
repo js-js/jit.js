@@ -37,7 +37,7 @@ NAN_METHOD(FunctionWrap::New) {
   FunctionWrap* wrap = new FunctionWrap(exec);
   wrap->Wrap(args.This());
 
-  args.This()->Set(NanNew("buffer"), args[0], ReadOnly);
+  args.This()->Set(NanNew("buffer"), args[0]);
 
   NanReturnValue(args.This());
 }
@@ -69,14 +69,14 @@ NAN_METHOD(FunctionWrap::Exec) {
     return NanThrowError("Can't execute function with more than 3 arguments");
   }
 
-  return Number::New(ret);
+  NanReturnValue(NanNew<Number>(ret));
 }
 
 
 void FunctionWrap::Init(Handle<Object> target) {
   NanScope();
 
-  Local<FunctionTemplate> t = FunctionTemplate::New(New);
+  Local<FunctionTemplate> t = NanNew<FunctionTemplate>(New);
   t->InstanceTemplate()->SetInternalFieldCount(1);
 
   NODE_SET_PROTOTYPE_METHOD(t, "exec", Exec);
@@ -144,7 +144,8 @@ intptr_t Runtime::Invoke(intptr_t arg0,
 
   TryCatch try_catch;
   try_catch.SetVerbose(true);
-  Local<Value> res = fn_->Call(NanNull().As<Object>(), 6, argv);
+  Local<Function> fn = NanNew<Function>(fn_);
+  Local<Value> res = fn->Call(NanNull().As<Object>(), 6, argv);
   if (try_catch.HasCaught()) {
     node::FatalException(try_catch);
     abort();
@@ -159,7 +160,7 @@ intptr_t Runtime::Invoke(intptr_t arg0,
 void Runtime::Init(Handle<Object> target) {
   NanScope();
 
-  Local<FunctionTemplate> t = FunctionTemplate::New(New);
+  Local<FunctionTemplate> t = NanNew<FunctionTemplate>(New);
   t->InstanceTemplate()->SetInternalFieldCount(1);
 
   NODE_SET_PROTOTYPE_METHOD(t, "getCallAddress", GetCallAddress);
