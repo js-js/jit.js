@@ -12,10 +12,10 @@
     "test": "mocha --recursive --reporter spec test/"
   },
   "dependencies": {
-    "bindings": "~1.1.0",
-    "mmap.js": "~0.2.0",
+    "bindings": "^1.1.0",
+    "mmap.js": "^1.0.0",
     "nan": "^1.7.0",
     "ref": "^1.0.0",
-    "weak": "~0.3.0"
+    "weak": "^0.3.0"
   }
 }
