@@ -17,5 +17,13 @@
     "nan": "^1.7.0",
     "ref": "^1.0.0",
     "weak": "^0.3.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/js-js/jit.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/js-js/jit.js/issues"
+  },
+  "homepage": "https://github.com/js-js/jit.js#readme"
 }
