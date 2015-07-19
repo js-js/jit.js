@@ -1,4 +1,7 @@
-# JIT Assembler [![Build Status](https://travis-ci.org/indutny/jit.js.png?branch=master)](https://travis-ci.org/indutny/jit.js)
+7 JIT Assembler
+
+[![Build Status](https://secure.travis-ci.org/js-js/jit.js.png)](http://travis-ci.org/js-js/jit.js)
+[![NPM version](https://badge.fury.io/js/jit.js.svg)](http://badge.fury.io/js/jit.js)
 
 ![Logo](https://raw.github.com/indutny/jit.js/master/logo/jit-small.png)
 
