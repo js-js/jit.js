@@ -1,4 +1,4 @@
-7 JIT Assembler
+# JIT Assembler
 
 [![Build Status](https://secure.travis-ci.org/js-js/jit.js.png)](http://travis-ci.org/js-js/jit.js)
 [![NPM version](https://badge.fury.io/js/jit.js.svg)](http://badge.fury.io/js/jit.js)
