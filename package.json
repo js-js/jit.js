@@ -6,7 +6,7 @@
   "main": "lib/jit.js",
   "author": "Fedor Indutny <fedor.indutny@gmail.com>",
   "devDependencies": {
-    "mocha": "~1.8.1"
+    "mocha": "^2.2.5"
   },
   "scripts": {
     "test": "mocha --recursive --reporter spec test/"
@@ -16,6 +16,7 @@
     "mmap.js": "^1.0.0",
     "nan": "^1.7.0",
     "ref": "^1.0.0",
+    "wbuf": "^1.7.0",
     "weak": "^0.4.1"
   },
   "repository": {
