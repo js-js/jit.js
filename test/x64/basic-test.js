@@ -71,4 +71,10 @@ describe('JIT.js x64 Basics', function() {
     });
     this.Return();
   }, 0xdead);
+
+  test('should support rip addressing', function() {
+    this.mov('rax', [ 'rip', 0x9 ]);
+    this.Return();
+    this.mov('rax', 42);
+  }, 42);
 });
