@@ -60,7 +60,7 @@ describe('JIT.js x64 Branching', function() {
 
   test('should support procedures on high regs', function() {
     this.labelScope(function() {
-      this.call('r15', 'proc');
+      this.call('r11', 'proc');
       this.Return();
 
       this.Proc('proc', function() {

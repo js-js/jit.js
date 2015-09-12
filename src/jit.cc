@@ -1,6 +1,6 @@
 #include "jit.h"
-#include "node_buffer.h"
 #include "nan.h"
+#include "node_buffer.h"
 
 #include <unistd.h>
 #include <string.h>
@@ -10,7 +10,6 @@
 namespace jit {
 
 using namespace v8;
-using namespace node;
 
 typedef intptr_t (*JitFnArg0)(void);
 typedef intptr_t (*JitFnArg1)(intptr_t);
@@ -18,114 +17,110 @@ typedef intptr_t (*JitFnArg2)(intptr_t, intptr_t);
 typedef intptr_t (*JitFnArg3)(intptr_t, intptr_t, intptr_t);
 
 
-static inline Handle<Object> GetPointerBuffer(void* ptr) {
-  return NanNewBufferHandle(reinterpret_cast<char*>(&ptr), sizeof(&ptr));
+static inline Local<Object> GetPointerBuffer(void* ptr) {
+  return Nan::CopyBuffer(reinterpret_cast<char*>(&ptr), sizeof(&ptr))
+      .ToLocalChecked();
 }
 
 
 NAN_METHOD(FunctionWrap::New) {
-  NanScope();
+  Nan::HandleScope();
 
-  if (args.Length() < 1 ||
-      !args[0]->IsObject() ||
-      !Buffer::HasInstance(args[0])) {
-    return NanThrowError("First argument should be Buffer!");
+  if (info.Length() < 1 ||
+      !info[0]->IsObject() ||
+      !node::Buffer::HasInstance(info[0])) {
+    return Nan::ThrowError("First argument should be Buffer!");
   }
 
-  char* exec = Buffer::Data(args[0].As<Object>());
+  char* exec = node::Buffer::Data(Nan::To<Object>(info[0]).ToLocalChecked());
 
   FunctionWrap* wrap = new FunctionWrap(exec);
-  wrap->Wrap(args.This());
+  wrap->Wrap(info.This());
 
-  args.This()->Set(NanNew("buffer"), args[0]);
+  info.This()->Set(Nan::New("buffer").ToLocalChecked(), info[0]);
 
-  NanReturnValue(args.This());
+  info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(FunctionWrap::Exec) {
-  NanScope();
+  Nan::HandleScope();
 
-  FunctionWrap* wrap = ObjectWrap::Unwrap<FunctionWrap>(args.This());
+  FunctionWrap* wrap = ObjectWrap::Unwrap<FunctionWrap>(info.This());
 
   intptr_t ret;
-  switch (args.Length()) {
+  switch (info.Length()) {
    case 0:
     ret = reinterpret_cast<JitFnArg0>(wrap->exec_)();
     break;
    case 1:
-    ret = reinterpret_cast<JitFnArg1>(wrap->exec_)(args[0]->IntegerValue());
+    ret = reinterpret_cast<JitFnArg1>(wrap->exec_)(info[0]->IntegerValue());
     break;
    case 2:
-    ret = reinterpret_cast<JitFnArg2>(wrap->exec_)(args[0]->IntegerValue(),
-                                                   args[1]->IntegerValue());
+    ret = reinterpret_cast<JitFnArg2>(wrap->exec_)(info[0]->IntegerValue(),
+                                                   info[1]->IntegerValue());
     break;
    case 3:
-    ret = reinterpret_cast<JitFnArg3>(wrap->exec_)(args[0]->IntegerValue(),
-                                                   args[1]->IntegerValue(),
-                                                   args[2]->IntegerValue());
+    ret = reinterpret_cast<JitFnArg3>(wrap->exec_)(info[0]->IntegerValue(),
+                                                   info[1]->IntegerValue(),
+                                                   info[2]->IntegerValue());
     break;
    default:
-    return NanThrowError("Can't execute function with more than 3 arguments");
+    return Nan::ThrowError("Can't execute function with more than 3 arguments");
   }
 
-  NanReturnValue(NanNew<Number>(ret));
+  info.GetReturnValue().Set(Nan::New<Number>(ret));
 }
 
 
 void FunctionWrap::Init(Handle<Object> target) {
-  NanScope();
+  Nan::HandleScope();
 
-  Local<FunctionTemplate> t = NanNew<FunctionTemplate>(New);
+  Local<FunctionTemplate> t = Nan::New<FunctionTemplate>(New);
   t->InstanceTemplate()->SetInternalFieldCount(1);
 
-  NODE_SET_PROTOTYPE_METHOD(t, "exec", Exec);
+  Nan::SetPrototypeMethod(t, "exec", Exec);
 
-  target->Set(NanNew("FunctionWrap"), t->GetFunction());
+  target->Set(Nan::New("FunctionWrap").ToLocalChecked(), t->GetFunction());
 }
 
 
-Runtime::Runtime(Handle<Function> fn) {
-  NanAssignPersistent(fn_, fn);
-}
-
-
-Runtime::~Runtime() {
-  NanDisposePersistent(fn_);
+Runtime::Runtime(Local<Function> fn) : callback_(fn) {
 }
 
 
 NAN_METHOD(Runtime::New) {
-  NanScope();
+  Nan::HandleScope();
 
-  if (args.Length() < 1 || !args[0]->IsFunction()) {
-    return NanThrowError("First argument should be a Function!");
+  if (info.Length() < 1 || !info[0]->IsFunction()) {
+    return Nan::ThrowError("First argument should be a Function!");
   }
 
-  Runtime* rt = new Runtime(args[0].As<Function>());
-  rt->Wrap(args.This());
+  Runtime* rt = new Runtime(info[0].As<Function>());
+  rt->Wrap(info.This());
 
-  NanReturnValue(args.This());
+  info.GetReturnValue().Set(info.This());
 }
 
 
 NAN_METHOD(Runtime::GetCallAddress) {
-  NanScope();
+  Nan::HandleScope();
 
   intptr_t (jit::Runtime::* invoke)(intptr_t, intptr_t, intptr_t, intptr_t,
                                     intptr_t, intptr_t);
   invoke = &Runtime::Invoke;
 
-  NanReturnValue(GetPointerBuffer(*reinterpret_cast<void**>(&invoke)));
+  info.GetReturnValue().Set(
+      GetPointerBuffer(*reinterpret_cast<void**>(&invoke)));
 }
 
 
 NAN_METHOD(Runtime::GetCallArgument) {
-  NanScope();
+  Nan::HandleScope();
 
-  Runtime* rt = ObjectWrap::Unwrap<Runtime>(args.This());
+  Runtime* rt = ObjectWrap::Unwrap<Runtime>(info.This());
 
-  NanReturnValue(GetPointerBuffer(reinterpret_cast<void*>(rt)));
+  info.GetReturnValue().Set(GetPointerBuffer(reinterpret_cast<void*>(rt)));
 }
 
 
@@ -135,38 +130,37 @@ intptr_t Runtime::Invoke(intptr_t arg0,
                          intptr_t arg3,
                          intptr_t arg4,
                          intptr_t arg5) {
-  NanScope();
+  Nan::HandleScope();
 
-  intptr_t args[] = { arg0, arg1, arg2, arg3, arg4, arg5 };
+  intptr_t info[] = { arg0, arg1, arg2, arg3, arg4, arg5 };
   Handle<Value> argv[6];
   for (int i = 0; i < 6; i++)
-    argv[i] = GetPointerBuffer(reinterpret_cast<void*>(args[i]));
+    argv[i] = GetPointerBuffer(reinterpret_cast<void*>(info[i]));
 
-  TryCatch try_catch;
+  Nan::TryCatch try_catch;
   try_catch.SetVerbose(true);
-  Local<Function> fn = NanNew<Function>(fn_);
-  Local<Value> res = fn->Call(NanNull().As<Object>(), 6, argv);
+  Local<Value> res = callback_.Call(6, argv);
   if (try_catch.HasCaught()) {
-    node::FatalException(try_catch);
+    Nan::FatalException(try_catch);
     abort();
   }
 
-  if (res->IsObject() && Buffer::HasInstance(res))
-    return *reinterpret_cast<intptr_t*>(Buffer::Data(res));
+  if (res->IsObject() && node::Buffer::HasInstance(res))
+    return *reinterpret_cast<intptr_t*>(node::Buffer::Data(res));
   else
     return static_cast<intptr_t>(res->Int32Value());
 }
 
 void Runtime::Init(Handle<Object> target) {
-  NanScope();
+  Nan::HandleScope();
 
-  Local<FunctionTemplate> t = NanNew<FunctionTemplate>(New);
+  Local<FunctionTemplate> t = Nan::New<FunctionTemplate>(New);
   t->InstanceTemplate()->SetInternalFieldCount(1);
 
-  NODE_SET_PROTOTYPE_METHOD(t, "getCallAddress", GetCallAddress);
-  NODE_SET_PROTOTYPE_METHOD(t, "getCallArgument", GetCallArgument);
+  Nan::SetPrototypeMethod(t, "getCallAddress", GetCallAddress);
+  Nan::SetPrototypeMethod(t, "getCallArgument", GetCallArgument);
 
-  target->Set(NanNew("Runtime"), t->GetFunction());
+  target->Set(Nan::New("Runtime").ToLocalChecked(), t->GetFunction());
 }
 
 
