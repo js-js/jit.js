@@ -133,7 +133,7 @@ intptr_t Runtime::Invoke(intptr_t arg0,
   Nan::HandleScope();
 
   intptr_t info[] = { arg0, arg1, arg2, arg3, arg4, arg5 };
-  Handle<Value> argv[6];
+  Local<Value> argv[6];
   for (int i = 0; i < 6; i++)
     argv[i] = GetPointerBuffer(reinterpret_cast<void*>(info[i]));
 
