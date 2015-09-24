@@ -88,4 +88,13 @@ describe('JIT.js x64 Basics', function() {
 
     this.Return();
   }, 0xef + 0xbeef);
+
+  test('should support movl', function() {
+    this.mov('rbx', new Buffer('78563412efcdab90', 'hex'));
+    this.push('rbx');
+    this.movl('rax', [ 'rsp', 0 ]);
+    this.pop('rbx');
+
+    this.Return();
+  }, 0x12345678);
 });
