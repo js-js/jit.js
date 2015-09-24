@@ -77,4 +77,15 @@ describe('JIT.js x64 Basics', function() {
     this.Return();
     this.mov('rax', 42);
   }, 42);
+
+  test('should support movzxb/movzxw', function() {
+    this.mov('rbx', 0xdeadbeef);
+    this.push('rbx');
+    this.movzxb('rax', [ 'rsp', 0 ]);
+    this.movzxw('rbx', [ 'rsp', 0 ]);
+    this.add('rax', 'rbx');
+    this.pop('rbx');
+
+    this.Return();
+  }, 0xef + 0xbeef);
 });
