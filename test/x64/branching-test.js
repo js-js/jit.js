@@ -25,7 +25,7 @@ describe('JIT.js x64 Branching', function() {
     this.Return();
   }, 10);
 
-  test('should support branching without scpe', function() {
+  test('should support branching without scope', function() {
     this.xor('rax', 'rax');
     this.mov('rcx', 10);
 
