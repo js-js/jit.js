@@ -6,14 +6,13 @@ if (process.arch !== 'x64')
 
 describe('JIT.js x64 Math', function() {
   test('should support math basics', function() {
-    this.spill([ 'r8', 'rbx' ], function() {
+    this.spill([ 'r8', 'rbx', 'rdx' ], function() {
       // 12 * 14
       this.mov('r8', 12);
       this.mov('rax', 14);
-      this.imul('r8');
+      this.imul('r8', 'rax');
 
       // += 5
-      this.mov('r8', 'rax');
       this.mov('rbx', 5);
       this.add('rbx', 'r8');
 
@@ -25,6 +24,7 @@ describe('JIT.js x64 Math', function() {
       // /= 5
       this.mov('rax', 'r8');
       this.mov('r8', 5);
+      this.xor('rdx', 'rdx');
       this.idiv('r8');
     });
 
