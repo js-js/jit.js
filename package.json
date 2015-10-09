@@ -1,6 +1,6 @@
 {
   "name": "jit.js",
-  "version": "1.4.3",
+  "version": "1.5.0",
   "description": "JIT assembly generator for node.js",
   "license": "MIT",
   "main": "lib/jit.js",
