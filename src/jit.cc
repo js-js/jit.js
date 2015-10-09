@@ -15,6 +15,8 @@ typedef intptr_t (*JitFnArg0)(void);
 typedef intptr_t (*JitFnArg1)(intptr_t);
 typedef intptr_t (*JitFnArg2)(intptr_t, intptr_t);
 typedef intptr_t (*JitFnArg3)(intptr_t, intptr_t, intptr_t);
+typedef intptr_t (*JitFnArg4)(intptr_t, intptr_t, intptr_t, intptr_t);
+typedef intptr_t (*JitFnArg5)(intptr_t, intptr_t, intptr_t, intptr_t, intptr_t);
 
 
 static inline Local<Object> GetPointerBuffer(void* ptr) {
@@ -43,6 +45,14 @@ NAN_METHOD(FunctionWrap::New) {
 }
 
 
+static intptr_t ToPtr(Local<Value> arg) {
+  if (arg->IsObject() && node::Buffer::HasInstance(arg))
+    return reinterpret_cast<intptr_t>(node::Buffer::Data(arg));
+  else
+    return arg->IntegerValue();
+}
+
+
 NAN_METHOD(FunctionWrap::Exec) {
   Nan::HandleScope();
 
@@ -54,16 +64,29 @@ NAN_METHOD(FunctionWrap::Exec) {
     ret = reinterpret_cast<JitFnArg0>(wrap->exec_)();
     break;
    case 1:
-    ret = reinterpret_cast<JitFnArg1>(wrap->exec_)(info[0]->IntegerValue());
+    ret = reinterpret_cast<JitFnArg1>(wrap->exec_)(ToPtr(info[0]));
     break;
    case 2:
-    ret = reinterpret_cast<JitFnArg2>(wrap->exec_)(info[0]->IntegerValue(),
-                                                   info[1]->IntegerValue());
+    ret = reinterpret_cast<JitFnArg2>(wrap->exec_)(ToPtr(info[0]),
+                                                   ToPtr(info[1]));
     break;
    case 3:
-    ret = reinterpret_cast<JitFnArg3>(wrap->exec_)(info[0]->IntegerValue(),
-                                                   info[1]->IntegerValue(),
-                                                   info[2]->IntegerValue());
+    ret = reinterpret_cast<JitFnArg3>(wrap->exec_)(ToPtr(info[0]),
+                                                   ToPtr(info[1]),
+                                                   ToPtr(info[2]));
+    break;
+   case 4:
+    ret = reinterpret_cast<JitFnArg4>(wrap->exec_)(ToPtr(info[0]),
+                                                   ToPtr(info[1]),
+                                                   ToPtr(info[2]),
+                                                   ToPtr(info[3]));
+    break;
+   case 5:
+    ret = reinterpret_cast<JitFnArg5>(wrap->exec_)(ToPtr(info[0]),
+                                                   ToPtr(info[1]),
+                                                   ToPtr(info[2]),
+                                                   ToPtr(info[3]),
+                                                   ToPtr(info[4]));
     break;
    default:
     return Nan::ThrowError("Can't execute function with more than 3 arguments");

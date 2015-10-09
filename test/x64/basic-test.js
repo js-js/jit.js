@@ -101,4 +101,12 @@ describe('JIT.js x64 Basics', function() {
       this.Return();
     });
   }, 0x12345678);
+
+  var buf42 = new Buffer(8);
+  buf42.fill(0);
+  buf42.writeUInt32LE(42, 0);
+  test('should receive buffer as argument', function() {
+    this.mov('rax', [ 'rdi', 0 ]);
+    this.Return();
+  }, 42, buf42);
 });
