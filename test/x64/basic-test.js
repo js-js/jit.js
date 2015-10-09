@@ -1,3 +1,5 @@
+var jit = require('../../');
+
 var common = require('../common'),
     test = common.test,
     Buffer = require('buffer').Buffer;
@@ -108,5 +110,5 @@ describe('JIT.js x64 Basics', function() {
   test('should receive buffer as argument', function() {
     this.mov('rax', [ 'rdi', 0 ]);
     this.Return();
-  }, 42, buf42);
+  }, 42, jit.ptr(buf42));
 });

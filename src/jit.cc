@@ -47,7 +47,7 @@ NAN_METHOD(FunctionWrap::New) {
 
 static intptr_t ToPtr(Local<Value> arg) {
   if (arg->IsObject() && node::Buffer::HasInstance(arg))
-    return reinterpret_cast<intptr_t>(node::Buffer::Data(arg));
+    return *reinterpret_cast<intptr_t*>(node::Buffer::Data(arg));
   else
     return arg->IntegerValue();
 }
