@@ -112,6 +112,7 @@ describe('JIT.js x64 Basics', function() {
     this.spill('rbx', function() {
       this.mov('rbx', new Buffer('78563412efcdab90', 'hex'));
       this.push('rbx');
+      this.mov('rax', 'rbx');
       this.movl('rax', [ 'rsp', 0 ]);
       this.pop('rbx');
 
