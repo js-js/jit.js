@@ -27,7 +27,6 @@ describe('JIT.js x64 Binary', function() {
     var skip = this.label();
 
     // Check lzcnt
-    this.int3();
     this.mov('rax', 0x80000001);
     this.cpuid();
     this.test('rcx', 1 << 5);
