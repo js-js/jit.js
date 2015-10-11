@@ -22,4 +22,13 @@ describe('JIT.js x64 Binary', function() {
 
     this.Return();
   }, 44);
+
+  test('should support lzcnt', function() {
+    this.mov('rcx', 0xdead);
+    this.lzcnt('rax', 'rcx');
+    this.lzcntl('rcx', 'rcx');
+    this.add('rax', 'rcx');
+
+    this.Return();
+  }, 0x30 + 0x10);
 });
