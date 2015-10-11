@@ -93,6 +93,21 @@ describe('JIT.js x64 Basics', function() {
     });
   }, 0xef + 0xbeef);
 
+  test('should support movsxb/movsxw/movsxl', function() {
+    this.spill('rbx', function() {
+      this.mov('rbx', 0xdeadbeef);
+      this.push('rbx');
+      this.movsxb('rax', [ 'rsp', 0 ]);
+      this.movsxw('rbx', [ 'rsp', 0 ]);
+      this.movsxl('rcx', [ 'rsp', 0 ]);
+      this.add('rax', 'rbx');
+      this.add('rax', 'rcx');
+      this.pop('rbx');
+
+      this.Return();
+    });
+  }, -559055411);
+
   test('should support movl', function() {
     this.spill('rbx', function() {
       this.mov('rbx', new Buffer('78563412efcdab90', 'hex'));
