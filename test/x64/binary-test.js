@@ -31,4 +31,22 @@ describe('JIT.js x64 Binary', function() {
 
     this.Return();
   }, 0x30 + 0x10);
+
+  test('should support tzcnt', function() {
+    this.mov('rcx', new Buffer('000000000eadbeef', 'hex'));
+    this.tzcnt('rax', 'rcx');
+    this.tzcntl('rcx', 'rcx');
+    this.add('rax', 'rcx');
+
+    this.Return();
+  }, 0x21 + 0x20);
+
+  test('should support popcnt', function() {
+    this.mov('rcx', new Buffer('deadbeefabbadead', 'hex'));
+    this.popcnt('rax', 'rcx');
+    this.popcntl('rcx', 'rcx');
+    this.add('rax', 'rcx');
+
+    this.Return();
+  }, 0x2d + 0x18);
 });
