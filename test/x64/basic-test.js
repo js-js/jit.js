@@ -120,6 +120,32 @@ describe('JIT.js x64 Basics', function() {
     });
   }, 0x12345678);
 
+  test('should support movw', function() {
+    this.spill('rbx', function() {
+      this.mov('rbx', new Buffer('78563412efcdab90', 'hex'));
+      this.push('rbx');
+      this.mov('rax', 'rbx');
+      this.xor('rax', 'rax');
+      this.movw('rax', [ 'rsp', 0 ]);
+      this.pop('rbx');
+
+      this.Return();
+    });
+  }, 0x5678);
+
+  test('should support movb', function() {
+    this.spill('rbx', function() {
+      this.mov('rbx', new Buffer('78563412efcdab90', 'hex'));
+      this.push('rbx');
+      this.mov('rax', 'rbx');
+      this.xor('rax', 'rax');
+      this.movb('rax', [ 'rsp', 0 ]);
+      this.pop('rbx');
+
+      this.Return();
+    });
+  }, 0x78);
+
   var buf42 = new Buffer(8);
   buf42.fill(0);
   buf42.writeUInt32LE(42, 0);
