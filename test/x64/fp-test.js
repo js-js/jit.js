@@ -30,4 +30,12 @@ describe('JIT.js x64 Floating Point', function() {
 
     this.Return();
   }, 184664608);
+
+  test('should support sqrt', function() {
+    this.loadDouble('rax', 13589.13589);
+    this.movq('xmm1', 'rax');
+    this.sqrtsd('xmm1', 'xmm1');
+    this.cvtsd2si('rax', 'xmm1');
+    this.Return();
+  }, 117);
 });
