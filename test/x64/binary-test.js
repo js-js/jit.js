@@ -24,23 +24,11 @@ describe('JIT.js x64 Binary', function() {
   }, 44);
 
   test('should support lzcnt', function() {
-    var skip = this.label();
-
-    // Check lzcnt
-    this.mov('rax', 0x80000001);
-    this.cpuid();
-    this.test('rcx', 1 << 5);
-    this.j('e', skip);
-
     this.mov('rcx', 0xdead);
     this.lzcnt('rax', 'rcx');
     this.lzcntl('rcx', 'rcx');
     this.add('rax', 'rcx');
 
-    this.Return();
-
-    this.bind(skip);
-    this.mov('rax', 0x30 + 0x10);
     this.Return();
   }, 0x30 + 0x10);
 
