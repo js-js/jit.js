@@ -38,4 +38,24 @@ describe('JIT.js x64 Floating Point', function() {
     this.cvtsd2si('rax', 'xmm1');
     this.Return();
   }, 117);
+
+  test('should support maxsd', function() {
+    this.loadDouble('rax', 123);
+    this.loadDouble('rcx', 456);
+    this.movq('xmm1', 'rax');
+    this.movq('xmm2', 'rcx');
+    this.maxsd('xmm1', 'xmm2');
+    this.cvtsd2si('rax', 'xmm1');
+    this.Return();
+  }, 456);
+
+  test('should support minsd', function() {
+    this.loadDouble('rax', 123);
+    this.loadDouble('rcx', 456);
+    this.movq('xmm1', 'rax');
+    this.movq('xmm2', 'rcx');
+    this.minsd('xmm1', 'xmm2');
+    this.cvtsd2si('rax', 'xmm1');
+    this.Return();
+  }, 123);
 });
