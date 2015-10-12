@@ -58,4 +58,24 @@ describe('JIT.js x64 Floating Point', function() {
     this.cvtsd2si('rax', 'xmm1');
     this.Return();
   }, 123);
+
+  test('should support pcmpeqd/psllq/xorpd', function() {
+    this.loadDouble('rax', 123);
+    this.movq('xmm1', 'rax');
+    this.pcmpeqd('xmm2', 'xmm2');
+    this.psllq('xmm2', 63);
+    this.xorpd('xmm1', 'xmm2');
+    this.cvtsd2si('rax', 'xmm1');
+    this.Return();
+  }, -123);
+
+  test('should support pcmpeqd/psrlq/andpd', function() {
+    this.loadDouble('rax', -123);
+    this.movq('xmm1', 'rax');
+    this.pcmpeqd('xmm2', 'xmm2');
+    this.psrlq('xmm2', 1);
+    this.andpd('xmm1', 'xmm2');
+    this.cvtsd2si('rax', 'xmm1');
+    this.Return();
+  }, 123);
 });
