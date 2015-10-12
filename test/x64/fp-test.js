@@ -78,4 +78,13 @@ describe('JIT.js x64 Floating Point', function() {
     this.cvtsd2si('rax', 'xmm1');
     this.Return();
   }, 123);
+
+  test('should support pcmpeqd/psrlq/andpd', function() {
+    this.loadDouble('rax', -123);
+    this.movq('xmm1', 'rax');
+    this.cvtsd2ss('xmm2', 'xmm1');
+    this.cvtss2sd('xmm3', 'xmm2');
+    this.cvtsd2si('rax', 'xmm3');
+    this.Return();
+  }, -123);
 });
