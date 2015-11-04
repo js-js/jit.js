@@ -49,4 +49,11 @@ describe('JIT.js x64 Binary', function() {
 
     this.Return();
   }, 0x2d + 0x18);
+
+  test('should correctly apply `and` to `rax`', function() {
+    this.mov('rax', 0xdeadbeef);
+    this.and('rax', 0xf);
+
+    this.Return();
+  }, 0xf);
 });
